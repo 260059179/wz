@@ -638,8 +638,8 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     if (!isValid) return;
     
     // 模拟登录验证（实际项目中应该调用后端API）
-    // 默认账号：aa，密码：aa
-    if (username === 'aa' && password === 'aa') {
+    // 默认账号：admin，密码：admin
+    if (username === 'admin' && password === 'admin') {
         // 登录成功，隐藏登录页面，显示主页面
         document.getElementById('loginContainer').style.display = 'none';
         document.getElementById('mainContainer').style.display = 'block';
