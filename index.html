@@ -13,16 +13,19 @@
             font-family: "Microsoft YaHei", "Consolas", "Monaco", monospace;
         }
 
-        /* 全局暗黑赛博朋克背景 */
+        /* 页面背景 - 赛博朋克暗黑渐变 */
         body {
             background: linear-gradient(135deg, #0a0a0a, #1a1a2e, #16213e);
             min-height: 100vh;
-            padding: 30px;
-            line-height: 1.6;
+            overflow: auto;
             color: #e0e0e0;
             /* 自定义滚动条 */
             scrollbar-width: thin;
             scrollbar-color: rgba(0, 191, 255, 0.5) transparent;
+            padding: 30px;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
         /* 自定义滚动条样式 */
@@ -41,75 +44,131 @@
             border: none;
         }
 
-        /* 顶部标题区域 */
-        .header-title {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 30px;
-            background: rgba(26, 26, 46, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 191, 255, 0.2);
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* 顶部渐变分割线（保留） */
-        .header-title::before,
-        .category-bar::before {
-            content: "";
-            position: absolute;
+        /* 右键特效画布（全屏覆盖） */
+        #clickCanvas {
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #00bfff, transparent);
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none; /* 不影响页面其他操作 */
+            z-index: 9999;
         }
 
-        /* 移除右下角圆形光晕（已注释） */
-        /* .header-title::after,
-        .category-bar::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(0, 191, 255, 0.1) 0%, transparent 70%);
-            border-radius: 50%;
-            z-index: 0;
-        } */
+        /* 时间及附加文本容器 */
+        .time-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
 
-        .header-title h1 {
+        /* 时间显示样式 */
+        .time {
+            font-size: 6rem;
+            font-weight: bold;
             color: #00bfff;
-            font-size: 32px;
-            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(0, 191, 255, 0.8);
+        }
+
+        /* 时间下方的日期和文案样式 */
+        .time-desc {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(138, 43, 226, 0.7);
+            margin-bottom: 8px;
+        }
+
+        .time-tag {
+            font-size: 1.2rem;
+            color: #e0e0ff;
             text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
-            position: relative;
-            z-index: 1;
+            letter-spacing: 1px;
         }
 
-        .header-title p {
-            color: #87ceeb;
-            font-size: 18px;
+        /* ========== 新的搜索框样式（替换原有必应搜索样式） ========== */
+        .search-box {
+            width: 600px;
+            max-width: 90%;
             position: relative;
-            z-index: 1;
+            margin: 0 auto 40px;
         }
 
-        /* 分类栏通用样式 */
-        .category-bar {
-            background: rgba(26, 26, 46, 0.6);
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 191, 255, 0.2);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 25px;
+            color: #fff;
+            font-size: 1.2rem;
+            outline: none;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+        }
+
+        /* 搜索按钮 */
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: #00ffff;
+            color: #16213e;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: #00e5e5;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+        }
+
+        /* 分类容器 - 外层总容器 */
+        .categories-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 40px; /* 增大分类间距，提升可读性 */
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* 分类卡片 - 移除所有包围样式，仅保留标题间距 */
+        .category-card {
+            /* 移除背景、圆角、内边距、伪元素等包围样式 */
+            background: transparent;
+            backdrop-filter: none;
+            border-radius: 0;
+            padding: 0;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
+        }
+
+        /* 移除分类标题的伪元素分隔线 */
+        .category-card::before {
+            display: none;
         }
 
         /* 分类标题样式 */
-        .category-bar .title {
+        .category-card .title {
             display: block;
             font-size: 20px;
             font-weight: bold;
@@ -120,38 +179,54 @@
             z-index: 1;
         }
 
-        /* 按钮容器 */
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
+        /* 卡片容器 - 网格布局：固定5列（核心修改） */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 强制5列，实现5个一组 */
+            gap: 20px;
             position: relative;
             z-index: 1;
         }
 
-        /* 按钮基础样式 */
-        .app-btn {
-            display: inline-flex;
+        /* 应用卡片基础样式 */
+        .app-card {
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            width: 120px;
-            height: 45px;
-            padding: 0 15px;
+            width: 100%;
+            height: 140px;
+            padding: 15px 10px;
             border-radius: 8px;
             font-size: 14px;
             font-weight: 600;
             color: #e0e0e0;
             transition: all 0.3s ease;
-            border: 1px solid rgba(0, 191, 255, 0.2);
             background: rgba(16, 16, 36, 0.4);
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            text-align: center;
         }
 
-        /* 按钮hover前的基础发光效果 */
-        .app-btn::before {
+        /* 卡片图标样式 */
+        .app-card .card-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 10px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 5px rgba(0, 191, 255, 0.3));
+        }
+
+        /* 卡片文字样式 */
+        .app-card .card-text {
+            line-height: 1.2;
+            word-break: break-all;
+        }
+
+        /* 卡片hover前的基础发光效果 */
+        .app-card::before {
             content: "";
             position: absolute;
             top: 0;
@@ -162,283 +237,555 @@
             transition: all 0.5s ease;
         }
 
-        /* 按钮hover效果 */
-        .app-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
+        /* 卡片hover效果 */
+        .app-card:hover {
+            transform: translateY(-5px);
             filter: brightness(1.2);
         }
 
-        .app-btn:hover::before {
+        .app-card:hover::before {
             left: 100%;
         }
 
-        /* 不同分类按钮的霓虹效果 */
-        .btn-browser {
-            box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+        .app-card:hover .card-icon {
+            filter: drop-shadow(0 0 8px rgba(0, 191, 255, 0.6));
         }
 
-        .btn-browser:hover {
+        /* 不同分类卡片的霓虹效果 */
+        .card-browser {
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.2);
+        }
+        .card-browser:hover {
             box-shadow: 0 0 20px rgba(0, 191, 255, 0.6);
             background: rgba(0, 191, 255, 0.1);
         }
 
-        .btn-office {
+        .card-office {
             box-shadow: 0 0 10px rgba(135, 206, 235, 0.2);
         }
-
-        .btn-office:hover {
+        .card-office:hover {
             box-shadow: 0 0 20px rgba(135, 206, 235, 0.6);
             background: rgba(135, 206, 235, 0.1);
         }
 
-        .btn-security {
+        .card-security {
             box-shadow: 0 0 10px rgba(255, 69, 0, 0.2);
         }
-
-        .btn-security:hover {
+        .card-security:hover {
             box-shadow: 0 0 20px rgba(255, 69, 0, 0.6);
             background: rgba(255, 69, 0, 0.1);
         }
 
-        .btn-media {
+        .card-media {
             box-shadow: 0 0 10px rgba(147, 112, 219, 0.2);
         }
-
-        .btn-media:hover {
+        .card-media:hover {
             box-shadow: 0 0 20px rgba(147, 112, 219, 0.6);
             background: rgba(147, 112, 219, 0.1);
         }
 
-        .btn-tool {
+        .card-tool {
             box-shadow: 0 0 10px rgba(255, 140, 0, 0.2);
         }
-
-        .btn-tool:hover {
+        .card-tool:hover {
             box-shadow: 0 0 20px rgba(255, 140, 0, 0.6);
             background: rgba(255, 140, 0, 0.1);
         }
 
-        .btn-dev {
+        .card-dev {
             box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
         }
-
-        .btn-dev:hover {
+        .card-dev:hover {
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
             background: rgba(0, 255, 255, 0.1);
         }
 
-        .btn-design {
+        .card-design {
             box-shadow: 0 0 10px rgba(255, 105, 180, 0.2);
         }
-
-        .btn-design:hover {
+        .card-design:hover {
             box-shadow: 0 0 20px rgba(255, 105, 180, 0.6);
             background: rgba(255, 105, 180, 0.1);
         }
 
-        .btn-system {
+        .card-system {
             box-shadow: 0 0 10px rgba(102, 205, 170, 0.2);
         }
-
-        .btn-system:hover {
+        .card-system:hover {
             box-shadow: 0 0 20px rgba(102, 205, 170, 0.6);
             background: rgba(102, 205, 170, 0.1);
         }
 
-        .btn-social {
+        .card-social {
             box-shadow: 0 0 10px rgba(50, 205, 50, 0.2);
         }
-
-        .btn-social:hover {
+        .card-social:hover {
             box-shadow: 0 0 20px rgba(50, 205, 50, 0.6);
             background: rgba(50, 205, 50, 0.1);
         }
 
-        .btn-remote {
+        .card-remote {
             box-shadow: 0 0 10px rgba(218, 165, 32, 0.2);
         }
-
-        .btn-remote:hover {
+        .card-remote:hover {
             box-shadow: 0 0 20px rgba(218, 165, 32, 0.6);
             background: rgba(218, 165, 32, 0.1);
-        }
-
-        /* 自定义右键菜单 */
-        .app-btn::context-menu {
-            background: rgba(26, 26, 46, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 191, 255, 0.3);
-            border-radius: 8px;
-            padding: 8px 0;
         }
 
         /* 适配PC端16:9高分辨率 */
         @media (min-width: 1280px) {
             body {
-                max-width: 1920px;
+                max-width: 900px;
                 margin: 0 auto;
                 padding: 40px;
             }
-
-            .category-bar {
-                padding: 30px;
-            }
-
-            .btn-group {
-                gap: 20px;
-            }
-
-            .app-btn {
-                width: 140px;
-                height: 50px;
+            .app-card {
+                height: 150px;
                 font-size: 15px;
+            }
+            .app-card .card-icon {
+                width: 45px;
+                height: 45px;
             }
         }
 
-        /* 防止移动端变形，保留基础适配 */
+        /* 移动端适配：屏幕小于768px时，改为2列（保证显示效果） */
         @media (max-width: 768px) {
-            .app-btn {
-                width: calc(50% - 7.5px);
+            .cards-container {
+                grid-template-columns: repeat(2, 1fr); /* 移动端2列，避免卡片挤压 */
+            }
+            .app-card {
+                height: 130px;
+                font-size: 13px;
+            }
+            .app-card .card-icon {
+                width: 35px;
+                height: 35px;
+            }
+            .search-box {
+                max-width: 100%;
+            }
+            .time {
+                font-size: 4rem;
+            }
+            .time-desc {
+                font-size: 1.5rem;
+            }
+            .time-tag {
+                font-size: 1rem;
             }
         }
 
         @media (max-width: 480px) {
-            .app-btn {
-                width: 100%;
+            .cards-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .app-card {
+                height: 130px;
+                font-size: 13px;
+            }
+            .search-input {
+                font-size: 14px;
+            }
+            .search-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+            .time {
+                font-size: 3rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 顶部标题区域 -->
-    <div class="header-title">
-        <h1>西西美化官方网站合集 | 2026纯净版</h1>
-        <p>所有链接均为官方正版，放心访问、下载、更新 | 点击按钮直达官网</p>
+    <!-- 右键特效画布 -->
+    <div id="clickCanvas"></div>
+
+    <!-- 时间及附加文本容器 -->
+    <div class="time-wrapper">
+        <!-- 时间显示 -->
+        <div class="time" id="time"></div>
+        <!-- 日期和文案 -->
+        <div class="time-desc">2026年3月12日 星期四</div>
+        <div class="time-tag">西西美化官网|桌面美化|系统优化|系统重装|软件分享</div>
+    </div>
+    
+    <!-- 新的搜索框（替换原有必应搜索框） -->
+    <div class="search-box">
+        <input type="text" class="search-input" id="search-input" placeholder="请输入搜索内容...">
+        <button class="search-btn" onclick="bingSearch()">🔍</button>
     </div>
 
-    <!-- 浏览器分类 -->
-    <div class="category-bar">
-        <span class="title">🌐 浏览器：</span>
-        <div class="btn-group">
-            <a href="https://www.google.com/chrome" target="_blank" class="app-btn btn-browser">Google Chrome</a>
-            <a href="https://www.microsoft.com/edge" target="_blank" class="app-btn btn-browser">Microsoft Edge</a>
-            <a href="https://www.mozilla.org/firefox" target="_blank" class="app-btn btn-browser">Mozilla Firefox</a>
-            <a href="https://browser.360.cn" target="_blank" class="app-btn btn-browser">360安全浏览器</a>
-            <a href="https://www.myquark.cn" target="_blank" class="app-btn btn-browser">夸克浏览器</a>
+    <!-- 分类总容器 -->
+    <div class="categories-wrapper">
+
+        <!-- 远程与访问分类 -->
+        <div class="category-card">
+            <span class="title">🖥️ 远程与访问</span>
+            <div class="cards-container">
+                <a href="https://www.todesk.com/download.html" target="_blank" class="app-card card-remote">
+                    <img src="https://gitee.com/kx520/tuners-toolbox/raw/master/logo/%E8%BF%9C%E7%A8%8B%E5%9B%BE%E6%A0%87/todesk%E8%BF%9C%E7%A8%8B.png" class="card-icon" alt="todesk远程">
+                    <span class="card-text">TeamViewer</span>
+                </a>
+                <a href="https://www.anydesk.com/zh" target="_blank" class="app-card card-remote">
+                    <img src="https://gitee.com/kx520/tuners-toolbox/raw/master/logo/%E8%BF%9C%E7%A8%8B%E5%9B%BE%E6%A0%87/anydesk%E8%BF%9C%E7%A8%8B.png" class="card-icon" alt="AnyDesk">
+                    <span class="card-text">AnyDesk</span>
+                </a>
+                <a href="https://www.sunlogin.com/" target="_blank" class="app-card card-remote">
+                    <img src="https://gitee.com/kx520/tuners-toolbox/raw/master/logo/%E8%BF%9C%E7%A8%8B%E5%9B%BE%E6%A0%87/%E5%90%91%E6%97%A5%E8%91%B5%E8%BF%9C%E7%A8%8B.png" class="card-icon" alt="向日葵远程">
+                    <span class="card-text">向日葵远程</span>
+                </a>
+                <a href="https://uuyc.163.com/" target="_blank" class="app-card card-remote">
+                    <img src="https://gitee.com/kx520/tuners-toolbox/raw/master/logo/%E8%BF%9C%E7%A8%8B%E5%9B%BE%E6%A0%87/%E7%BD%91%E6%98%93UU.png" class="card-icon" alt="向日葵远程">
+                    <span class="card-text">网易UU</span>
+                </a>
+            </div>
+        </div>
+
+
+        <!-- 社交与通讯分类 -->
+        <div class="category-card">
+            <span class="title">💬 社交与通讯</span>
+            <div class="cards-container">
+                <a href="https://pc.weixin.qq.com/" target="_blank" class="app-card card-social">
+                    <img src="https://gitee.com/kx520/tuners-toolbox/raw/master/logo/%E7%A4%BE%E4%BA%A4%E5%8A%9E%E5%85%AC/%E5%BE%AE%E4%BF%A1.png" class="card-icon" alt="微信">
+                    <span class="card-text">微信</span>
+                </a>
+                <a href="https://im.qq.com/index/#/windows" target="_blank" class="app-card card-social">
+                    <img src="https://gitee.com/kx520/tuners-toolbox/raw/master/logo/%E7%A4%BE%E4%BA%A4%E5%8A%9E%E5%85%AC/QQ.png" class="card-icon" alt="腾讯QQ">
+                    <span class="card-text">腾讯QQ</span>
+                </a>
+                <a href="https://www.douban.com" target="_blank" class="app-card card-social">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="豆瓣">
+                    <span class="card-text">豆瓣</span>
+                </a>
+                <a href="https://www.zhihu.com" target="_blank" class="app-card card-social">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="知乎">
+                    <span class="card-text">知乎</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 浏览器分类 -->
+        <div class="category-card">
+            <span class="title">🌐 浏览器</span>
+            <div class="cards-container">
+                <a href="https://www.google.com/chrome" target="_blank" class="app-card card-browser">
+                    <img src="https://gitee.com/kx520/tuners-toolbox/raw/master/logo/%E7%B3%BB%E7%BB%9F%E8%BD%AF%E4%BB%B6%E5%9B%BE%E6%A0%87/%E8%B0%B7%E6%AD%8C%E6%B5%8F%E8%A7%88%E5%99%A8Google.png" class="card-icon" alt="Google Chrome">
+                    <span class="card-text">Google Chrome</span>
+                </a>
+
+                <a href="https://www.microsoft.com/edge" target="_blank" class="app-card card-browser">
+                    <img src="https://gitee.com/kx520/tuners-toolbox/raw/master/logo/%E7%B3%BB%E7%BB%9F%E8%BD%AF%E4%BB%B6%E5%9B%BE%E6%A0%87/Edge%E6%B5%8F%E8%A7%88%E5%99%A8.png" class="card-icon" alt="Microsoft Edge">
+                    <span class="card-text">Microsoft Edge</span>
+                </a>
+
+                <a href="https://www.mozilla.org/firefox" target="_blank" class="app-card card-browser">
+                    <img src="https://gitee.com/kx520/tuners-toolbox/raw/master/logo/%E7%B3%BB%E7%BB%9F%E8%BD%AF%E4%BB%B6%E5%9B%BE%E6%A0%87/%E7%81%AB%E7%8B%90%E6%B5%8F%E8%A7%88%E5%99%A8.png" class="card-icon" alt="Mozilla Firefox">
+                    <span class="card-text">Mozilla Firefox</span>
+                </a>
+
+                <a href="https://sogou.browser.qq.com/" target="_blank" class="app-card card-browser">
+                    <img src="https://gitee.com/kx520/tuners-toolbox/raw/master/logo/%E7%B3%BB%E7%BB%9F%E8%BD%AF%E4%BB%B6%E5%9B%BE%E6%A0%87/%E6%90%9C%E7%8B%97%E6%B5%8F%E8%A7%88%E5%99%A8.png" class="card-icon" alt="搜狗浏览器">
+                    <span class="card-text">搜狗浏览器</span>
+                </a>
+
+                <a href="https://www.myquark.cn" target="_blank" class="app-card card-browser">
+                    <img src="https://gitee.com/kx520/tuners-toolbox/raw/master/logo/%E7%B3%BB%E7%BB%9F%E8%BD%AF%E4%BB%B6%E5%9B%BE%E6%A0%87/%E5%A4%B8%E5%85%8B%E6%B5%8F%E8%A7%88%E5%99%A8.png" class="card-icon" alt="夸克浏览器">
+                    <span class="card-text">夸克浏览器</span>
+                </a>
+
+            </div>
+        </div>
+
+ 
+
+        <!-- 安全与杀毒分类 -->
+        <div class="category-card">
+            <span class="title">🔐 安全与杀毒</span>
+            <div class="cards-container">
+                <a href="https://www.huorong.cn" target="_blank" class="app-card card-security">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="火绒安全">
+                    <span class="card-text">火绒安全</span>
+                </a>
+                <a href="https://www.360.cn" target="_blank" class="app-card card-security">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="360安全卫士">
+                    <span class="card-text">360安全卫士</span>
+                </a>
+                <a href="https://guanjia.qq.com" target="_blank" class="app-card card-security">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="腾讯电脑管家">
+                    <span class="card-text">腾讯电脑管家</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 影音与播放分类 -->
+        <div class="category-card">
+            <span class="title">🎵 影音与播放</span>
+            <div class="cards-container">
+<a href="https://www.kugou.com/" target="_blank" class="app-card card-media">
+                    <img src="https://gitee.com/kx520/tuners-toolbox/raw/master/logo/%E9%9F%B3%E4%B9%90%E5%BD%B1%E9%9F%B3/%E9%85%B7%E7%8B%97%E9%9F%B3%E4%B9%90.png" class="card-icon" alt="酷狗音乐">
+                    <span class="card-text">酷狗音乐</span>
+                </a>
+                <a href="https://music.163.com" target="_blank" class="app-card card-media">
+                    <img src="https://vip.123pan.cn/1818277977/ymjew503t0m000dajarsaeosz6ktxcbxDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="网易云音乐">
+                    <span class="card-text">网易云音乐</span>
+                </a>
+                <a href="https://music.douyin.com/qishui" target="_blank" class="app-card card-media">
+                    <img src="https://gitee.com/kx520/tuners-toolbox/raw/master/logo/%E9%9F%B3%E4%B9%90%E5%BD%B1%E9%9F%B3/%E6%B1%BD%E6%B0%B4%E9%9F%B3%E4%B9%90.png" class="card-icon" alt="汽水音乐">
+                    <span class="card-text">汽水音乐</span>
+                </a>
+
+                <a href="https://kg.qq.com/" target="_blank" class="app-card card-media">
+                    <img src="https://gitee.com/kx520/tuners-toolbox/raw/master/logo/%E9%9F%B3%E4%B9%90%E5%BD%B1%E9%9F%B3/%E5%85%A8%E6%B0%91K%E6%AD%8C.png" class="card-icon" alt="全民K歌">
+                    <span class="card-text">全民K歌</span>
+                </a>
+
+                <a href="https://y.qq.com" target="_blank" class="app-card card-media">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc41rf2ycaphr0c5DIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="QQ音乐">
+                    <span class="card-text">QQ音乐</span>
+                </a>
+                <a href="https://potplayer.daum.net" target="_blank" class="app-card card-media">
+                    <img src="https://vip.123pan.cn/1818277977/ymjew503t0l000dajarqac8bhxktt3kjDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="PotPlayer">
+                    <span class="card-text">PotPlayer</span>
+                </a>
+                <a href="https://www.iqiyi.com" target="_blank" class="app-card card-media">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0n000daika9sxhoymfu1msxDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="爱奇艺">
+                    <span class="card-text">爱奇艺</span>
+                </a>
+                <a href="https://v.qq.com" target="_blank" class="app-card card-media">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0l000daikab6keoywfu5etuDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="腾讯视频">
+                    <span class="card-text">腾讯视频</span>
+                </a>
+                <a href="https://www.capcut.cn" target="_blank" class="app-card card-design">
+                    <img src="https://gitee.com/kx520/tuners-toolbox/raw/master/logo/%E5%BD%B1%E8%A7%86%E5%9B%BE%E6%A0%87/%E5%89%AA%E6%98%A0.png" class="card-icon" alt="剪映专业版">
+                    <span class="card-text">剪映专业版</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 压缩与工具分类 -->
+        <div class="category-card">
+            <span class="title">🚀 压缩与工具</span>
+            <div class="cards-container">
+                <a href="https://www.7-zip.org" target="_blank" class="app-card card-tool">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="7-Zip">
+                    <span class="card-text">7-Zip</span>
+                </a>
+                <a href="https://www.rarlab.com" target="_blank" class="app-card card-tool">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="WinRAR">
+                    <span class="card-text">WinRAR</span>
+                </a>
+                <a href="https://pan.baidu.com" target="_blank" class="app-card card-tool">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="百度网盘">
+                    <span class="card-text">百度网盘</span>
+                </a>
+                <a href="https://www.xunlei.com" target="_blank" class="app-card card-tool">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="迅雷">
+                    <span class="card-text">迅雷</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 开发与编程分类 -->
+        <div class="category-card">
+            <span class="title">✍️ 开发与编程</span>
+            <div class="cards-container">
+                <a href="https://code.visualstudio.com" target="_blank" class="app-card card-dev">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="VS Code">
+                    <span class="card-text">VS Code</span>
+                </a>
+                <a href="https://github.com" target="_blank" class="app-card card-dev">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="GitHub">
+                    <span class="card-text">GitHub</span>
+                </a>
+                <a href="https://www.python.org" target="_blank" class="app-card card-dev">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="Python">
+                    <span class="card-text">Python</span>
+                </a>
+                <a href="https://nodejs.org" target="_blank" class="app-card card-dev">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="Node.js">
+                    <span class="card-text">Node.js</span>
+                </a>
+                <a href="https://www.jetbrains.com" target="_blank" class="app-card card-dev">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="JetBrains">
+                    <span class="card-text">JetBrains</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 设计与图像分类 -->
+        <div class="category-card">
+            <span class="title">🎨 设计与图像</span>
+            <div class="cards-container">
+                <a href="https://www.adobe.com/cn" target="_blank" class="app-card card-design">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="Adobe 全家桶">
+                    <span class="card-text">Adobe 全家桶</span>
+                </a>
+                <a href="https://www.capcut.cn" target="_blank" class="app-card card-design">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="剪映专业版">
+                    <span class="card-text">剪映专业版</span>
+                </a>
+                <a href="https://www.figma.com" target="_blank" class="app-card card-design">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="Figma">
+                    <span class="card-text">Figma</span>
+                </a>
+                <a href="https://www.gimp.org" target="_blank" class="app-card card-design">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="GIMP">
+                    <span class="card-text">GIMP</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 系统与驱动分类 -->
+        <div class="category-card">
+            <span class="title">📶 系统与驱动</span>
+            <div class="cards-container">
+                <a href="https://www.drivergenius.com" target="_blank" class="app-card card-system">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="驱动精灵">
+                    <span class="card-text">驱动精灵</span>
+                </a>
+                <a href="https://www.ccleaner.com" target="_blank" class="app-card card-system">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="CCleaner">
+                    <span class="card-text">CCleaner</span>
+                </a>
+                <a href="https://www.diskgenius.cn" target="_blank" class="app-card card-system">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="DiskGenius">
+                    <span class="card-text">DiskGenius</span>
+                </a>
+                <a href="https://www.partitionwizard.com" target="_blank" class="app-card card-system">
+                    <img src="https://vip.123pan.cn/1818277977/yk6baz03t0m000dajc3r6qpvrhph3qyzDIYPBdi0Awr0AvxPBdrPBF==.png" class="card-icon" alt="分区助手">
+                    <span class="card-text">分区助手</span>
+                </a>
+            </div>
         </div>
     </div>
 
-    <!-- 办公与文档分类 -->
-    <div class="category-bar">
-        <span class="title">📝 办公与文档：</span>
-        <div class="btn-group">
-            <a href="https://www.microsoft.com/zh-cn/microsoft-365" target="_blank" class="app-btn btn-office">Microsoft 365</a>
-            <a href="https://www.wps.cn" target="_blank" class="app-btn btn-office">WPS Office</a>
-            <a href="https://www.dingtalk.com" target="_blank" class="app-btn btn-office">钉钉</a>
-            <a href="https://meeting.tencent.com" target="_blank" class="app-btn btn-office">腾讯会议</a>
-            <a href="https://www.feishu.cn" target="_blank" class="app-btn btn-office">飞书</a>
-            <a href="https://shimo.im" target="_blank" class="app-btn btn-office">石墨文档</a>
-            <a href="https://note.youdao.com" target="_blank" class="app-btn btn-office">有道云笔记</a>
-            <a href="https://www.microsoft.com/zh-cn/microsoft-365" target="_blank" class="app-btn btn-office">Microsoft 365</a>
-            <a href="https://www.wps.cn" target="_blank" class="app-btn btn-office">WPS Office</a>
-            <a href="https://www.dingtalk.com" target="_blank" class="app-btn btn-office">钉钉</a>
-            <a href="https://meeting.tencent.com" target="_blank" class="app-btn btn-office">腾讯会议</a>
-            <a href="https://www.feishu.cn" target="_blank" class="app-btn btn-office">飞书</a>
-            <a href="https://shimo.im" target="_blank" class="app-btn btn-office">石墨文档</a>
-            <a href="https://note.youdao.com" target="_blank" class="app-btn btn-office">有道云笔记</a>
-        </div>
-    </div>
+    <script>
+        // ===================== 时间显示功能 =====================
+        function updateTime() {
+            const now = new Date();
+            // 格式化时间：时:分:秒（两位数）
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const timeStr = `${hours}:${minutes}:${seconds}`;
+            document.getElementById('time').textContent = timeStr;
+        }
+        // 初始化时间 + 每秒更新
+        updateTime();
+        setInterval(updateTime, 1000);
 
-    <!-- 安全与杀毒分类 -->
-    <div class="category-bar">
-        <span class="title">🔐 安全与杀毒：</span>
-        <div class="btn-group">
-            <a href="https://www.huorong.cn" target="_blank" class="app-btn btn-security">火绒安全</a>
-            <a href="https://www.360.cn" target="_blank" class="app-btn btn-security">360安全卫士</a>
-            <a href="https://guanjia.qq.com" target="_blank" class="app-btn btn-security">腾讯电脑管家</a>
-        </div>
-    </div>
+        // ===================== 右键彩色文字粒子特效（✨ 西 ✨西 ✨美 ✨化 ✨） =====================
+        (function() {
+            // 1. 创建画布
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const container = document.getElementById('clickCanvas');
+            container.appendChild(canvas);
 
-    <!-- 影音与播放分类 -->
-    <div class="category-bar">
-        <span class="title">🎵 影音与播放：</span>
-        <div class="btn-group">
-            <a href="https://music.163.com" target="_blank" class="app-btn btn-media">网易云音乐</a>
-            <a href="https://y.qq.com" target="_blank" class="app-btn btn-media">QQ音乐</a>
-            <a href="https://potplayer.daum.net" target="_blank" class="app-btn btn-media">PotPlayer</a>
-            <a href="https://www.iqiyi.com" target="_blank" class="app-btn btn-media">爱奇艺</a>
-            <a href="https://v.qq.com" target="_blank" class="app-btn btn-media">腾讯视频</a>
-        </div>
-    </div>
+            // 2. 适配窗口大小
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
 
-    <!-- 压缩与工具分类 -->
-    <div class="category-bar">
-        <span class="title">📁 压缩与工具：</span>
-        <div class="btn-group">
-            <a href="https://www.7-zip.org" target="_blank" class="app-btn btn-tool">7-Zip</a>
-            <a href="https://www.rarlab.com" target="_blank" class="app-btn btn-tool">WinRAR</a>
-            <a href="https://pan.baidu.com" target="_blank" class="app-btn btn-tool">百度网盘</a>
-            <a href="https://www.xunlei.com" target="_blank" class="app-btn btn-tool">迅雷</a>
-        </div>
-    </div>
+            // 3. 文字粒子类
+            class TextParticle {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    // 自定义文字库：✨ 西 ✨西 ✨美 ✨化 ✨
+                    this.texts = ['✨', '西', '✨', '西', '✨', '美', '✨', '化', '✨'];
+                    this.text = this.texts[Math.floor(Math.random() * this.texts.length)];
+                    this.size = Math.random() * 12 + 8; // 文字大小 8-20px
+                    this.speedX = (Math.random() - 0.5) * 4; // 移动速度
+                    this.speedY = (Math.random() - 0.5) * 4;
+                    this.alpha = 1; // 透明度
+                    this.decay = Math.random() * 0.01 + 0.008; // 消失速度
+                    // 随机渐变色（紫/粉/蓝系，贴合美化主题）
+                    this.color = `hsl(${Math.random() * 90 + 240}, 100%, 60%)`;
+                }
 
-    <!-- 开发与编程分类 -->
-    <div class="category-bar">
-        <span class="title">✍️ 开发与编程：</span>
-        <div class="btn-group">
-            <a href="https://code.visualstudio.com" target="_blank" class="app-btn btn-dev">VS Code</a>
-            <a href="https://github.com" target="_blank" class="app-btn btn-dev">GitHub</a>
-            <a href="https://www.python.org" target="_blank" class="app-btn btn-dev">Python</a>
-            <a href="https://nodejs.org" target="_blank" class="app-btn btn-dev">Node.js</a>
-            <a href="https://www.jetbrains.com" target="_blank" class="app-btn btn-dev">JetBrains</a>
-        </div>
-    </div>
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    this.alpha -= this.decay;
+                    // 轻微旋转效果
+                    this.rotate = (this.rotate || 0) + 0.02;
+                }
 
-    <!-- 设计与图像分类 -->
-    <div class="category-bar">
-        <span class="title">🎨 设计与图像：</span>
-        <div class="btn-group">
-            <a href="https://www.adobe.com/cn" target="_blank" class="app-btn btn-design">Adobe 全家桶</a>
-            <a href="https://www.capcut.cn" target="_blank" class="app-btn btn-design">剪映专业版</a>
-            <a href="https://www.figma.com" target="_blank" class="app-btn btn-design">Figma</a>
-            <a href="https://www.gimp.org" target="_blank" class="app-btn btn-design">GIMP</a>
-        </div>
-    </div>
+                draw() {
+                    ctx.save();
+                    ctx.globalAlpha = this.alpha;
+                    ctx.fillStyle = this.color;
+                    ctx.font = `bold ${this.size}px "Microsoft YaHei"`;
+                    // 文字居中绘制
+                    const textWidth = ctx.measureText(this.text).width;
+                    ctx.translate(this.x - textWidth/2, this.y + this.size/2);
+                    ctx.rotate(this.rotate || 0);
+                    ctx.fillText(this.text, 0, 0);
+                    ctx.restore();
+                }
+            }
 
-    <!-- 系统与驱动分类 -->
-    <div class="category-bar">
-        <span class="title">📶 系统与驱动：</span>
-        <div class="btn-group">
-            <a href="https://www.drivergenius.com" target="_blank" class="app-btn btn-system">驱动精灵</a>
-            <a href="https://www.ccleaner.com" target="_blank" class="app-btn btn-system">CCleaner</a>
-            <a href="https://www.diskgenius.cn" target="_blank" class="app-btn btn-system">DiskGenius</a>
-            <a href="https://www.partitionwizard.com" target="_blank" class="app-btn btn-system">分区助手</a>
-        </div>
-    </div>
+            // 4. 粒子数组
+            const particles = [];
 
-    <!-- 社交与通讯分类 -->
-    <div class="category-bar">
-        <span class="title">💬 社交与通讯：</span>
-        <div class="btn-group">
-            <a href="https://weixin.qq.com" target="_blank" class="app-btn btn-social">微信</a>
-            <a href="https://im.qq.com" target="_blank" class="app-btn btn-social">QQ</a>
-            <a href="https://www.douban.com" target="_blank" class="app-btn btn-social">豆瓣</a>
-            <a href="https://www.zhihu.com" target="_blank" class="app-btn btn-social">知乎</a>
-        </div>
-    </div>
+            // 5. 生成粒子
+            function createTextParticles(x, y) {
+                for (let i = 0; i < 18; i++) { // 一次生成18个文字粒子，效果更饱满
+                    particles.push(new TextParticle(x, y));
+                }
+            }
 
-    <!-- 远程与访问分类 -->
-    <div class="category-bar">
-        <span class="title">🖥️ 远程与访问：</span>
-        <div class="btn-group">
-            <a href="https://www.teamviewer.com/zh-cn/" target="_blank" class="app-btn btn-remote">TeamViewer</a>
-            <a href="https://www.anydesk.com/zh" target="_blank" class="app-btn btn-remote">AnyDesk</a>
-            <a href="https://www.sunlogin.com/" target="_blank" class="app-btn btn-remote">向日葵远程</a>
-            <a href="https://remotedesktop.google.com/" target="_blank" class="app-btn btn-remote">Chrome远程桌面</a>
-            <a href="https://www.parsec.app/" target="_blank" class="app-btn btn-remote">Parsec</a>
-            <a href="https://www.microsoft.com/zh-cn/microsoft-365/microsoft-remote-desktop" target="_blank" class="app-btn btn-remote">微软远程桌面</a>
-        </div>
-    </div>
+            // 6. 动画循环
+            function animate() {
+                requestAnimationFrame(animate);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.update();
+                    p.draw();
+                    if (p.alpha <= 0) particles.splice(i, 1);
+                }
+            }
+
+            // 7. 监听右键
+            document.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                createTextParticles(e.clientX, e.clientY);
+            });
+
+            animate();
+        })();
+
+        // ===================== 必应搜索功能 =====================
+        function bingSearch() {
+            const searchInput = document.getElementById('search-input');
+            const keyword = searchInput.value.trim();
+            if (keyword) {
+                // 跳转到必应搜索页面
+                const searchUrl = `https://cn.bing.com/search?q=${encodeURIComponent(keyword)}`;
+                window.open(searchUrl, '_blank');
+                // 清空输入框
+                searchInput.value = '';
+            } else {
+                // 提示输入关键词
+                alert('请输入搜索关键词！');
+            }
+        }
+
+        // 支持回车键触发搜索
+        document.getElementById('search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                bingSearch();
+            }
+        });
+    </script>
 </body>
 </html>
