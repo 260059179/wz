@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>西西美化官方网站合集 | 2026纯净版</title>
+    <title>九幽音频官方网站合集 | 2026纯净版</title>
     <style>
         /* 全局样式重置 */
         * {
@@ -408,7 +408,7 @@
         <div class="time" id="time"></div>
         <!-- 日期和文案 -->
         <div class="time-desc">2026年3月12日 星期四</div>
-        <div class="time-tag">西西美化官网|桌面美化|系统优化|系统重装|软件分享</div>
+        <div class="time-tag">九幽音频官网|桌面美化|系统优化|系统重装|软件分享</div>
     </div>
     
     <!-- 新的搜索框（替换原有必应搜索框） -->
@@ -787,5 +787,40 @@
             }
         });
     </script>
+
+<br><br>  <!-- 上面空 2 行 -->
+
+<div id="runtimeBar" style="text-align:center; font-size:18px; color:#00cfff;">
+  🚀 本站已安全运行 0 年 0 天 0 小时 0 分钟 0 秒
+</div>
+
+<script>
+const launchDate = new Date('2015-01-01 00:00:00');
+function updateRuntime() {
+  const now = new Date();
+  const diffMs = now - launchDate;
+  const totalSeconds = Math.floor(diffMs / 1000);
+  const totalMinutes = Math.floor(totalSeconds / 60);
+  const totalHours = Math.floor(totalMinutes / 60);
+  const totalDays = Math.floor(totalHours / 24);
+  const years = Math.floor(totalDays / 365);
+  const days = totalDays % 365;
+  const hours = totalHours % 24;
+  const minutes = totalMinutes % 60;
+  const seconds = totalSeconds % 60;
+  document.getElementById('runtimeBar').innerHTML = `
+    <span style="color:#ff3333">🚀</span> 本站已安全运行 
+    <span style="color:#fff; font-weight:bold">${years}</span>年 
+    <span style="color:#fff; font-weight:bold">${days}</span>天 
+    <span style="color:#fff; font-weight:bold">${hours}</span>小时 
+    <span style="color:#fff; font-weight:bold">${minutes}</span>分钟 
+    <span style="color:#fff; font-weight:bold">${seconds}</span>秒
+  `;
+}
+updateRuntime(); setInterval(updateRuntime, 1000);
+</script>
+
+<br><br>  <!-- 下面空 2 行 -->
+
 </body>
 </html>
