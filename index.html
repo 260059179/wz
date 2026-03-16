@@ -211,13 +211,25 @@
         }
 
         /* 卡片图标样式 */
-        .app-card .card-icon {
-            width: 40px;
-            height: 40px;
-            margin-bottom: 10px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 5px rgba(0, 191, 255, 0.3));
-        }
+.app-card .card-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(0, 191, 255, 0.3));
+    transition: all 0.3s ease;
+}
+/* 鼠标悬停 —— 弹跳动画 */
+.app-card:hover .card-icon {
+    animation: bounce 0.9s ease;
+}
+@keyframes bounce {
+    0%   { transform: translateY(0); }
+    25%  { transform: translateY(-10px); }
+    50%  { transform: translateY(0); }
+    75%  { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+}
 
         /* 卡片文字样式 */
         .app-card .card-text {
