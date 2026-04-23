@@ -37,22 +37,15 @@
       "iconUrl": "https://files.codelife.cc/icons/github.com.svg",
       "categoryId": "cat_dev"
     },
-   {
+    {
       "id": "s2",
-      "name": "GitHub",
-      "url": "https://github.com",
-      "iconUrl": "https://files.codelife.cc/icons/github.com.svg",
-      "categoryId": "cat_dev"
-    },
-   {
-      "id": "s3",
-      "name": "GitHub",
-      "url": "https://github.com",
-      "iconUrl": "https://files.codelife.cc/icons/github.com.svg",
-      "categoryId": "cat_dev"
+      "name": "OpenAI",
+      "url": "https://openai.com",
+      "iconUrl": "https://files.codelife.cc/icons/openai.com.svg",
+      "categoryId": "cat_ai"
     },
     {
-      "id": "s4",
+      "id": "s3",
       "name": "OpenAI",
       "url": "https://openai.com",
       "iconUrl": "https://files.codelife.cc/icons/openai.com.svg",
